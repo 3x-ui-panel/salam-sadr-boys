@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://api.github.com; font-src 'self'; base-uri 'self'; form-action 'self'">
+  <title>سلام صدر بویز | سایت بچه‌های مدرسه‌ی سلام صدر</title>
+  <meta name="description" content="سلام صدر بویز — دنیای بچه‌های مدرسه‌ی سلام صدر: تکلیف‌ها، برنامه‌ی کلاسی، اعلان‌ها و بخش ویژه؛ همه یک‌جا و هر روز به‌روز.">
+  <meta name="theme-color" content="#1D1710">
+  <meta property="og:title" content="سلام صدر بویز">
+  <meta property="og:description" content="تکلیف‌ها، برنامه‌ی کلاسی، خبرها و بخش ویژه — مخصوص بچه‌های مدرسه‌ی سلام صدر.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="./assets/img/favicon.svg">
+  <link rel="apple-touch-icon" href="./assets/img/favicon.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="preload" href="./assets/fonts/Lalezar-Arabic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./assets/fonts/Vazirmatn-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./assets/fonts/Vazirmatn-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./assets/css/base.css">
+  <link rel="stylesheet" href="./assets/css/sections.css">
+</head>
+<body>
+
+  <!-- ═══ Preloader ═══ -->
+  <div id="preloader" aria-hidden="true">
+    <div class="pre-inner">
+      <svg class="pre-logo" viewBox="0 0 240 240" fill="none" aria-hidden="true">
+        <g class="pre-ring" stroke-width="13" stroke-linecap="round" fill="none">
+          <path d="M120 21 A99 99 0 0 1 216.06 96.05" stroke="#F5B301"/>
+          <path d="M219 120 A99 99 0 0 1 143.95 216.06" stroke="#14B8C4"/>
+          <path d="M120 219 A99 99 0 0 1 23.94 143.95" stroke="#E5484D"/>
+          <path d="M21 120 A99 99 0 0 1 96.05 23.94" stroke="#3BA55D"/>
+        </g>
+        <circle cx="120" cy="120" r="79" fill="#1D1710"/>
+        <path d="M129 88 L100 126 L117 126 L109 154 L142 114 L123 114 Z" fill="#F5B301"/>
+        <path d="M120 152 C107 143 90 141 78 145 L78 168 C90 164 107 166 120 175 Z" fill="#FAF6ED"/>
+        <path d="M120 152 C133 143 150 141 162 145 L162 168 C150 164 133 166 120 175 Z" fill="#FAF6ED"/>
+      </svg>
+      <div class="pre-word">سلام صدر بویز</div>
+      <div class="pre-bar"><i></i></div>
+    </div>
+  </div>
+
+  <div id="progress-bar" aria-hidden="true"></div>
+  <div id="cursor" aria-hidden="true"></div>
+
+  <!-- ═══ Preview banner (panel preview mode) ═══ -->
+  <div id="preview-banner" hidden>
+    <span>حالت پیش‌نمایش — این تغییرات هنوز منتشر نشده‌اند.</span>
+    <button id="preview-exit" type="button">بازگشت به نسخه‌ی منتشرشده</button>
+  </div>
+
+  <!-- ═══ Header ═══ -->
+  <header id="site-nav">
+    <div class="nav-inner">
+      <a class="brand" href="#home" aria-label="سلام صدر بویز — خانه">
+        <span class="brand-logo"><img src="./assets/img/logo.svg" alt="نشان سلام صدر بویز" width="46" height="46"></span>
+        <span class="brand-text"><b>سلام صدر بویز</b><i>SALAM SADR BOYS</i></span>
+      </a>
+      <nav class="nav-links" aria-label="فهرست اصلی">
+        <a href="#home" class="is-active">خانه</a>
+        <a href="#homework">تکالیف</a>
+        <a href="#subjects">درس‌ها</a>
+        <a href="#announcements">اعلان‌ها</a>
+        <a href="#vip">ویژه</a>
+        <a href="#about">درباره ما</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn btn-small btn-ink" href="#vip">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          عضو ویژه
+        </a>
+        <button id="burger" type="button" aria-label="باز کردن منو" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="mobile-menu" aria-hidden="true">
+    <nav aria-label="منوی موبایل">
+      <a href="#home"><i>۰۱</i>خانه</a>
+      <a href="#homework"><i>۰۲</i>تکالیف</a>
+      <a href="#subjects"><i>۰۳</i>درس‌ها و برنامه</a>
+      <a href="#announcements"><i>۰۴</i>اعلان‌ها</a>
+      <a href="#vip"><i>۰۵</i>بخش ویژه</a>
+      <a href="#about"><i>۰۶</i>درباره ما</a>
+    </nav>
+    <div class="mm-foot">SALAM SADR BOYS</div>
+  </div>
+
+  <main>
+
+    <!-- ═══ Hero ═══ -->
+    <section id="home" class="hero">
+      <div class="hero-bg" aria-hidden="true">
+        <span class="blob blob-y"></span>
+        <span class="blob blob-t"></span>
+        <span class="blob blob-r"></span>
+        <span class="blob blob-g"></span>
+        <span class="grid-lines"></span>
+      </div>
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="hero-chip" data-reveal="down">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg>
+            <span id="hero-date">…</span>
+          </div>
+          <h1 class="hero-title" data-reveal="clip">
+            <span class="ht-line">سلام <em class="ht-mark">صدر</em> بویز</span>
+            <span class="ht-sub">SALAM SADR BOYS</span>
+          </h1>
+          <p class="hero-tag" data-reveal="up" data-delay="120" id="hero-tagline">دنیای بچه‌های مدرسه‌ی سلام صدر؛ تکلیف‌ها، برنامه‌ی کلاسی، خبرها و همه‌چیزِ بین — یک‌جا، مرتب و هر روز به‌روز.</p>
+          <div class="hero-actions" data-reveal="up" data-delay="220">
+            <a class="btn btn-primary magnetic" href="#homework">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6a2 2 0 0 1 2-2h5v15H6a2 2 0 0 0-2 2Zm16 0V6a2 2 0 0 0-2-2h-5v15h5a2 2 0 0 1 2 2Z"/></svg>
+              تکلیف‌های امروز
+            </a>
+            <a class="btn btn-ghost magnetic" href="#vip">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              بخش ویژه
+            </a>
+          </div>
+          <ul class="hero-facts" data-reveal="up" data-delay="300">
+            <li><b>۳</b><span>پایه‌ی هفتم تا نهم</span></li>
+            <li><b>هر روز</b><span>به‌روزرسانی تکلیف‌ها</span></li>
+            <li><b>ویژه</b><span>بخش مخصوص اعضا</span></li>
+          </ul>
+        </div>
+        <div class="hero-art" data-reveal="pop" data-delay="150">
+          <div class="orbit" aria-hidden="true">
+            <i class="o1"></i><i class="o2"></i><i class="o3"></i>
+          </div>
+          <img class="crest" src="./assets/img/logo.svg" alt="نشان سلام صدر بویز" width="300" height="300" id="hero-crest">
+          <div class="float-chips" aria-hidden="true">
+            <a class="chip chip-y" href="#homework"><b id="chip-hw">تکلیف‌ها</b><span>بخش تکالیف</span></a>
+            <a class="chip chip-t" href="#announcements"><b id="chip-an">اعلان‌ها</b><span>تازه‌ترین خبرها</span></a>
+            <a class="chip chip-g" href="#subjects"><b id="chip-sc">برنامه</b><span>برنامه‌ی کلاسی</span></a>
+          </div>
+          <svg class="sketch sketch-arrow" viewBox="0 0 90 60" fill="none" aria-hidden="true"><path d="M84 8 C 60 10 30 18 10 44 M10 44 l12 -4 M10 44 l4 -12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+          <svg class="sketch sketch-star" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M20 4 C21 13 27 19 36 20 C27 21 21 27 20 36 C19 27 13 21 4 20 C13 19 19 13 20 4 Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <a class="scroll-cue" href="#homework" aria-label="برو به بخش تکالیف">
+        <span>اسکرول کن</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v14m0 0l-6-6m6 6l6-6"/></svg>
+      </a>
+    </section>
+
+    <!-- ═══ Marquee ═══ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track" id="marquee-track">
+        <span>تکلیف یادت نره</span><i>✦</i><span>برنامه‌ی کلاسی همیشه دم دست</span><i>✦</i><span>خبرهای صدر، اول این‌جا</span><i>✦</i><span>هر روز به‌روز</span><i>✦</i><span>سلام صدر بویز</span><i>✦</i>
+      </div>
+    </div>
+
+    <!-- ═══ Homework ═══ -->
+    <section id="homework" class="sec sec-homework">
+      <div class="wrap">
+        <header class="sec-head" data-reveal="up">
+          <span class="sec-chip">HOMEWORK</span>
+          <h2>تکلیف‌ها</h2>
+          <svg class="squiggle sq-y" viewBox="0 0 200 12" fill="none" aria-hidden="true"><path d="M3 8 C 30 2, 60 10, 90 6 S 150 2, 197 7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+          <p>هر چیزی که معلم‌ها گفتن، همین‌جا مرتب و با مهلت دقیق. دیگه دلیل و بهونه‌ای نیست!</p>
+        </header>
+
+        <div class="hw-toolbar" data-reveal="up" data-delay="80">
+          <div class="bucket-tabs" role="tablist" aria-label="روز تکلیف">
+            <button type="button" class="btab is-active" data-bucket="today" role="tab" aria-selected="true">امروز<b class="bcount">۰</b></button>
+            <button type="button" class="btab" data-bucket="tomorrow" role="tab" aria-selected="false">فردا<b class="bcount">۰</b></button>
+            <button type="button" class="btab" data-bucket="upcoming" role="tab" aria-selected="false">بعدی‌ها<b class="bcount">۰</b></button>
+            <button type="button" class="btab" data-bucket="past" role="tab" aria-selected="false">گذشته‌ها<b class="bcount">۰</b></button>
+          </div>
+          <div class="hw-filters">
+            <div class="grade-pills" role="group" aria-label="فیلتر پایه">
+              <button type="button" class="gpill is-active" data-grade="0">همه</button>
+              <button type="button" class="gpill gp-y" data-grade="7">هفتم</button>
+              <button type="button" class="gpill gp-t" data-grade="8">هشتم</button>
+              <button type="button" class="gpill gp-g" data-grade="9">نهم</button>
+            </div>
+            <label class="hw-search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+              <input type="search" id="hw-search-input" placeholder="جست‌وجو توی تکلیف‌ها…" maxlength="60">
+            </label>
+          </div>
+        </div>
+
+        <div id="hw-list" class="hw-list" data-reveal="up" data-delay="140" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ═══ Subjects & Schedule ═══ -->
+    <section id="subjects" class="sec sec-subjects">
+      <div class="wrap">
+        <header class="sec-head" data-reveal="up">
+          <span class="sec-chip">SUBJECTS</span>
+          <h2>درس‌ها و برنامه‌ی هفته</h2>
+          <svg class="squiggle sq-t" viewBox="0 0 200 12" fill="none" aria-hidden="true"><path d="M3 8 C 30 2, 60 10, 90 6 S 150 2, 197 7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+          <p>درس‌های هر پایه با دبیرشون، به‌اضافه‌ی برنامه‌ی کامل هفته — همین‌جا همیشه در دسترسه.</p>
+        </header>
+        <div id="subject-grid" class="subject-grid" data-reveal="up" data-delay="100"></div>
+
+        <div class="schedule-box" data-reveal="up" data-delay="160">
+          <div class="sc-head">
+            <h3>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+              برنامه‌ی کلاسی
+            </h3>
+            <div class="grade-tabs" role="tablist" aria-label="پایه">
+              <button type="button" class="gtab gt-y is-active" data-sgrade="7" role="tab" aria-selected="true">هفتم</button>
+              <button type="button" class="gtab gt-t" data-sgrade="8" role="tab" aria-selected="false">هشتم</button>
+              <button type="button" class="gtab gt-g" data-sgrade="9" role="tab" aria-selected="false">نهم</button>
+            </div>
+          </div>
+          <div class="day-tabs" id="day-tabs" role="tablist" aria-label="روز هفته"></div>
+          <div id="schedule-list" class="schedule-list" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Announcements ═══ -->
+    <section id="announcements" class="sec sec-announcements">
+      <div class="wrap">
+        <header class="sec-head" data-reveal="up">
+          <span class="sec-chip">NEWS</span>
+          <h2>اعلان‌ها و خبرها</h2>
+          <svg class="squiggle sq-r" viewBox="0 0 200 12" fill="none" aria-hidden="true"><path d="M3 8 C 30 2, 60 10, 90 6 S 150 2, 197 7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+          <p>هر خبر مهمی از مدرسه، اول همین‌جا pin می‌شه — امتحان، مسابقه، اردو و…</p>
+        </header>
+        <div id="ann-list" class="ann-list" data-reveal="up" data-delay="120" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ═══ VIP ═══ -->
+    <section id="vip" class="sec sec-vip">
+      <div class="wrap vip-wrap">
+        <div class="vip-card" data-reveal="pop">
+          <div class="vip-lock" id="vip-lock-art" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          </div>
+          <span class="sec-chip sec-chip-dark">VIP ZONE</span>
+          <h2>بخش ویژه‌ی صدر بویز</h2>
+          <p class="vip-desc" id="vip-desc">اینجا مال بچه‌های ویژه‌ست؛ چیزهایی که بقیه ندارن — جزوه‌های خاص، لینک‌های طلایی و سورپرایزهای صدر. رمز رو فقط از مدیر بگیر!</p>
+          <div id="vip-locked">
+            <button class="btn btn-primary magnetic" id="vip-open" type="button">ورود اعضای ویژه</button>
+            <span class="vip-hint">رمز رو یادت رفته؟ از مدیر بگیر!</span>
+          </div>
+          <div id="vip-unlocked" hidden>
+            <div class="vip-hello">خوش اومدی بک! این هم بخش مخصوص تو:</div>
+            <div id="vip-links" class="vip-links"></div>
+            <button class="btn btn-ghost-dark" id="vip-lock-btn" type="button">قفل کردن بخش ویژه</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ About ═══ -->
+    <section id="about" class="sec sec-about">
+      <div class="wrap about-grid">
+        <div class="about-copy" data-reveal="up">
+          <span class="sec-chip">ABOUT US</span>
+          <h2 id="about-title">چرا «سلام صدر بویز»؟</h2>
+          <svg class="squiggle sq-g" viewBox="0 0 200 12" fill="none" aria-hidden="true"><path d="M3 8 C 30 2, 60 10, 90 6 S 150 2, 197 7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+          <p id="about-text"></p>
+          <div class="roadmap-chip">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg>
+            <span id="roadmap-text">دستیار هوشمند درسی — به‌زودی</span>
+          </div>
+        </div>
+        <div class="about-side" data-reveal="pop" data-delay="120">
+          <img src="./assets/img/logo.svg" alt="نشان سلام صدر بویز" width="150" height="150" class="about-crest">
+          <div class="stats-grid" id="stats-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Contact ═══ -->
+    <section id="contact" class="sec sec-contact">
+      <div class="wrap">
+        <header class="sec-head" data-reveal="up">
+          <span class="sec-chip">CONTACT</span>
+          <h2>ارتباط با ما</h2>
+          <svg class="squiggle sq-y" viewBox="0 0 200 12" fill="none" aria-hidden="true"><path d="M3 8 C 30 2, 60 10, 90 6 S 150 2, 197 7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+        </header>
+        <div id="contact-cards" class="contact-cards" data-reveal="up" data-delay="100"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ Footer ═══ -->
+  <footer id="site-footer">
+    <div class="wrap foot-grid">
+      <div class="foot-brand">
+        <img src="./assets/img/logo.svg" alt="نشان سلام صدر بویز" width="56" height="56">
+        <div>
+          <b>سلام صدر بویز</b>
+          <span>سایت بچه‌های مدرسه‌ی سلام صدر</span>
+        </div>
+      </div>
+      <nav class="foot-links" aria-label="پیوندهای پابرگ">
+        <a href="#homework">تکالیف</a>
+        <a href="#subjects">درس‌ها و برنامه</a>
+        <a href="#announcements">اعلان‌ها</a>
+        <a href="#vip">بخش ویژه</a>
+        <a href="#about">درباره ما</a>
+      </nav>
+      <div class="foot-note">
+        <span class="foot-latin">SALAM SADR BOYS</span>
+        <span>ساخته‌شده برای بچه‌های صدر، با دل.</span>
+        <span class="foot-copy">© <b id="foot-year">۱۴۰۵</b> — همه‌چیز برای بچه‌های صدر</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══ Mobile bottom nav ═══ -->
+  <nav id="bottom-nav" aria-label="ناوبری موبایل">
+    <a href="#home" class="bn-item is-active" data-bn="home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg>
+      <span>خانه</span>
+    </a>
+    <a href="#homework" class="bn-item" data-bn="homework">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6a2 2 0 0 1 2-2h5v15H6a2 2 0 0 0-2 2Zm16 0V6a2 2 0 0 0-2-2h-5v15h5a2 2 0 0 1 2 2Z"/></svg>
+      <span>تکالیف</span>
+    </a>
+    <a href="#announcements" class="bn-item" data-bn="announcements">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16l-3-2-3 2-3-2-3 2V4Z"/><path d="M9 9h6M9 13h6"/></svg>
+      <span>اعلان‌ها</span>
+    </a>
+    <a href="#vip" class="bn-item" data-bn="vip">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      <span>ویژه</span>
+    </a>
+  </nav>
+
+  <!-- ═══ VIP modal ═══ -->
+  <div id="vip-modal" class="modal" hidden aria-hidden="true">
+    <div class="modal-back" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="vip-m-title">
+      <button class="modal-x" type="button" data-close aria-label="بستن">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="vip-m-art" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+      </div>
+      <h3 id="vip-m-title">ورود اعضای ویژه</h3>
+      <p>رمز بخش ویژه رو وارد کن. اگه نداری، از مدیر بگیر!</p>
+      <form id="vip-form" autocomplete="off">
+        <input type="password" id="vip-pass" placeholder="رمز ویژه…" maxlength="64" required aria-label="رمز بخش ویژه">
+        <button class="btn btn-primary" type="submit" id="vip-submit">ورود</button>
+      </form>
+      <div id="vip-msg" class="vip-msg" role="alert" hidden></div>
+    </div>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="./assets/js/app-core.js" defer></script>
+  <script src="./assets/js/app-ui.js" defer></script>
+</body>
+</html>

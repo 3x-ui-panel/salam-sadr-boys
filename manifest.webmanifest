@@ -1,0 +1,16 @@
+{
+  "name": "سلام صدر بویز",
+  "short_name": "صدر بویز",
+  "description": "سایت بچه‌های مدرسه‌ی سلام صدر — تکالیف، برنامه و خبرها",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FAF6ED",
+  "theme_color": "#1D1710",
+  "icons": [
+    { "src": "./assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "./assets/img/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

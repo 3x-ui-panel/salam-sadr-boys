@@ -590,13 +590,33 @@
   }
 
   /* ═══════════ boot ═══════════ */
+  async function probeServer() {
+    // On the static mirror (GitHub Pages) there is no /api — say it honestly.
+    try {
+      const r = await fetch('/api/health', { cache: 'no-store' });
+      return r.ok;
+    } catch (e) { return false; }
+  }
+
+  function markStaticMirror() {
+    $$('.gate-box').forEach(g => {
+      if (g.querySelector('.gate-note')) return;
+      const n = document.createElement('span');
+      n.className = 'gate-note';
+      n.textContent = 'نکته: چت، عضویت و دستیار هوشمند فقط روی نسخه‌ی اصلی سایت فعاله؛ این نسخه برای دیدن تکالیف و اخباره.';
+      g.appendChild(n);
+    });
+  }
+
   async function boot() {
     wireAuth();
     wireChat();
     wireAI();
+    const up = await probeServer();
     await Promise.all([loadMe(), loadGrades()]);
     renderNavAuth();
     updateGates();
+    if (!up && !me) markStaticMirror();
     if (me) {
       openRoom('general').catch(() => { });
       // light rooms refresh for unread badges

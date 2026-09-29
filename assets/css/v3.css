@@ -123,6 +123,11 @@
 .gate-dark{background:var(--card-dark);border-color:var(--line-dark)}
 .gate-dark b{color:var(--paper-on-dark)}
 .gate-dark span{color:var(--muted-on-dark)}
+.gate-note{
+  margin-top:.4rem;font-size:.72rem;line-height:2;
+  color:#8A6400;background:var(--yellow-soft);
+  border-radius:.75rem;padding:.5rem 1rem;max-width:32rem;
+}
 
 /* ─────────── Chat ─────────── */
 .chat-shell{

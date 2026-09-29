@@ -194,3 +194,27 @@ input,select,textarea{font:inherit;color:inherit}
   .prow{flex-wrap:wrap}
   .prow .r-main{flex:1 1 100%}
 }
+
+/* ── v3: users & debug views ── */
+.plabel{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--ink-2)}
+.plabel input{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font:inherit;min-width:170px;background:#fff;color:var(--ink)}
+.plabel input:focus{outline:none;border-color:var(--turquoise);box-shadow:0 0 0 3px rgba(20,184,196,.14)}
+.au-list{display:grid;gap:10px}
+.urow{border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px;background:#FCFAF4}
+.u-main{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.u-main b{font-size:14px}
+.u-main span{font-size:12px;color:var(--ink-3);font-weight:600}
+.u-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-3)}
+.u-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.u-actions .pbtn{padding:7px 12px;font-size:12px}
+.u-mute{padding:7px 10px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:12px;background:#fff;color:var(--ink)}
+.u-chip,.uchip{font-style:normal;font-size:10.5px;font-weight:800;border-radius:99px;padding:3px 9px}
+.uchip.u-green{background:rgba(59,165,93,.14);color:#2A7046}
+.uchip.u-red{background:rgba(229,72,77,.13);color:#B23136}
+.uchip.u-amber{background:rgba(245,179,1,.18);color:#8A6400}
+.uchip.u-gold{background:var(--yellow);color:#1D1710}
+.uchip.u-t{background:rgba(20,184,196,.14);color:#0E7C86}
+.dbg-grid{display:grid;gap:8px;margin-top:10px}
+.dbg-row{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#FCFAF4}
+.dbg-row b{font-size:13px}
+.dbg-row span{font-size:12.5px;color:var(--ink-2);text-align:left}

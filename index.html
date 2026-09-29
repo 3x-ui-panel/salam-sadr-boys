@@ -18,6 +18,7 @@
   <link rel="preload" href="./assets/fonts/Vazirmatn-Bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="./assets/css/base.css">
   <link rel="stylesheet" href="./assets/css/sections.css">
+  <link rel="stylesheet" href="./assets/css/v3.css">
 </head>
 <body>
 
@@ -32,14 +33,7 @@
   </div>
 
   <!-- stories-style segmented scroll progress -->
-  <div id="progress-bar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-
-  <!-- custom double-ring cursor (Laocoön) -->
-  <div id="cursor-i" aria-hidden="true"></div>
-  <div id="cursor-o" aria-hidden="true"></div>
-
-  <!-- fixed cinematic canvas: liquid waves + forge sparks -->
-  <canvas id="fx" aria-hidden="true"></canvas>
+  <div id="progress-bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
   <!-- five vertical grid lines + drifting dots (Laocoön) -->
   <div class="stage-grid" aria-hidden="true">
@@ -64,11 +58,13 @@
         <a href="#homework">تکالیف</a>
         <a href="#schedule-sec">برنامه</a>
         <a href="#announcements">اعلان‌ها</a>
-        <a href="#subjects">درس‌ها</a>
+        <a href="#chat">چت</a>
+        <a href="#ai">دستیار</a>
         <a href="#vip">ویژه</a>
         <a href="#about">درباره</a>
       </nav>
       <div class="nav-side">
+        <div class="nav-auth" id="nav-auth"></div>
         <div class="clock" aria-label="ساعت تهران">
           <b id="clock-time">--:--</b>
           <span>تهران</span>
@@ -88,8 +84,10 @@
         <a href="#homework"><i>۰۲</i><b data-split>تکالیف</b></a>
         <a href="#schedule-sec"><i>۰۳</i><b data-split>برنامه و درس‌ها</b></a>
         <a href="#announcements"><i>۰۴</i><b data-split>اعلان‌ها</b></a>
-        <a href="#vip"><i>۰۵</i><b data-split>بخش ویژه</b></a>
-        <a href="#about"><i>۰۶</i><b data-split>درباره و تماس</b></a>
+        <a href="#chat"><i>۰۵</i><b data-split>چت صدر</b></a>
+        <a href="#ai"><i>۰۶</i><b data-split>دستیار هوشمند</b></a>
+        <a href="#vip"><i>۰۷</i><b data-split>بخش ویژه</b></a>
+        <a href="#about"><i>۰۸</i><b data-split>درباره و تماس</b></a>
       </nav>
       <div class="mo-foot">
         <span>SALAM SADR BOYS</span>
@@ -126,11 +124,21 @@
         </div>
         <div class="hero-art" data-spring data-delay="140">
           <div class="orbit" aria-hidden="true"><i class="o1"></i><i class="o2"></i><i class="o3"></i></div>
-          <img class="crest" id="hero-crest" src="./assets/img/logo-float.png" alt="لوگوی سلام صدر — خوش‌نویسی سلام" width="520" height="470">
+          <!-- v3 emblem — rotating ring seal, pure CSS (no image, no lag) -->
+          <div class="emblem" aria-hidden="true">
+            <i class="emb-glow"></i>
+            <i class="emb-ring emb-ra"></i>
+            <i class="emb-ring emb-rb"></i>
+            <svg class="emb-text" id="emb-ring-text" viewBox="0 0 200 200" aria-hidden="true"></svg>
+            <span class="emb-core">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z"/></svg>
+            </span>
+            <i class="emb-orb o-y"></i><i class="emb-orb o-t"></i><i class="emb-orb o-g"></i><i class="emb-orb o-r"></i>
+          </div>
           <div class="float-chips" aria-hidden="false">
             <a class="chip chip-y" href="#homework"><b id="chip-hw">تکلیف‌ها</b><span>بخش تکالیف</span></a>
-            <a class="chip chip-t" href="#announcements"><b id="chip-an">اعلان‌ها</b><span>تازه‌ترین خبرها</span></a>
-            <a class="chip chip-g" href="#schedule-sec"><b id="chip-sc">برنامه</b><span>برنامه‌ی کلاسی</span></a>
+            <a class="chip chip-t" href="#chat"><b id="chip-an">اعلان‌ها</b><span>چت بچه‌ها</span></a>
+            <a class="chip chip-g" href="#ai"><b id="chip-sc">برنامه</b><span>دستیار درسی</span></a>
           </div>
         </div>
       </div>
@@ -279,6 +287,121 @@
       </div>
     </section>
 
+    <!-- ═══ Chat — two rooms, everyone talks ═══ -->
+    <section id="chat" class="panel panel-light chat-sec">
+      <div class="checker-seam" aria-hidden="true"></div>
+      <div class="wrap">
+        <header class="sec-head" data-spring>
+          <span class="sec-chip sc-t">CHAT ROOM</span>
+          <h2>چت صدر بویز</h2>
+          <p>کلاسِ آنلاین صدر — اتاق عمومی و اتاق ویژه؛ همه‌ی بچه‌ها می‌تونن توی هر دو حرف بزنن، عکس بفرستن و حالشون رو خوب نگه دارن. احترام یادتون نره!</p>
+        </header>
+
+        <div class="chat-shell" id="chat-shell" data-spring data-delay="80" hidden>
+          <aside class="chat-side">
+            <div class="chat-rooms" role="tablist" aria-label="اتاق‌های گفت‌وگو">
+              <button type="button" class="croom is-active" data-room="general" role="tab" aria-selected="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12Z"/></svg>
+                <b>عمومی</b><span>همه‌ی بچه‌های صدر</span>
+              </button>
+              <button type="button" class="croom croom-vip" data-room="vip" role="tab" aria-selected="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.5 3L12 5l4.5 6L21 8l-1.6 9.5H4.6L3 8Z"/></svg>
+                <b>ویژه</b><span>اتاق طلایی</span>
+              </button>
+            </div>
+            <div class="chat-rules">
+              <b>قوانین چت</b>
+              <span>احترام حفظ بشه؛ شماره و تبلیغ نفرست؛ مسئولیت پیام‌ها با خودته و مدیر هر لحظه می‌تونه سکوتِ موقت بده.</span>
+            </div>
+          </aside>
+          <div class="chat-main">
+            <div class="chat-top">
+              <b id="chat-room-name">عمومی</b>
+              <span id="chat-room-desc">گفت‌وگوی همه‌ی بچه‌های صدر</span>
+            </div>
+            <div id="chat-msgs" class="chat-msgs" aria-live="polite"></div>
+            <form id="chat-form" class="chat-form" autocomplete="off">
+              <button type="button" id="chat-img-btn" aria-label="فرستادن عکس" class="cf-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17.5 9.5 13l3.5 3 3-2.5L20 17"/></svg>
+              </button>
+              <input type="file" id="chat-img-input" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+              <input type="text" id="chat-text" maxlength="2000" placeholder="پیامت رو بنویس…" aria-label="متن پیام">
+              <button type="submit" id="chat-send" class="cf-send" aria-label="ارسال پیام">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.5 13.5M21 3l-6.8 18-3.7-7.5L3 9.8 21 3Z"/></svg>
+              </button>
+            </form>
+            <div id="chat-img-preview" class="chat-img-preview" hidden>
+              <img alt="پیش‌نمایش عکس پیوست">
+              <button type="button" id="chat-img-x" aria-label="حذف عکس">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="chat-gate" class="gate-box" hidden>
+          <b>برای حرف زدن باید عضو صدر بشی</b>
+          <span>ثبت‌نام ۳۰ ثانیه بیشتر طول نمی‌کشه؛ بعدش توی هر دو اتاق می‌تونی آزادانه حرف بزنی.</span>
+          <div class="gate-actions">
+            <button class="btn btn-y" type="button" data-auth-open="register">عضویت</button>
+            <button class="btn btn-ghost-dark" type="button" data-auth-open="login">ورود</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ AI tutor — grades 7-9 only ═══ -->
+    <section id="ai" class="sec sec-dark ai-sec">
+      <div class="wrap">
+        <header class="sec-head" data-spring>
+          <span class="sec-chip sc-g">AI TUTOR</span>
+          <h2>دستیار هوشمند درسی</h2>
+          <p>سؤال درسی داری؟ بنویس، یا از مسئله عکس بگیر و بفرست — دستیار صدر قدم‌به‌قدم کامل و درست برات توضیح می‌ده. فقط کتاب‌های درسی هفتم، هشتم و نهم!</p>
+        </header>
+
+        <div class="ai-shell" id="ai-shell" data-spring data-delay="80" hidden>
+          <div class="ai-top">
+            <span class="ai-dot" aria-hidden="true"></span>
+            <b>دستیار صدر</b>
+            <span class="ai-scope">فقط درس‌های ۷ / ۸ / ۹</span>
+            <button type="button" id="ai-new" class="ai-new">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              گفت‌وگوی تازه
+            </button>
+          </div>
+          <div id="ai-msgs" class="ai-msgs" aria-live="polite"></div>
+          <div class="ai-suggest" id="ai-suggest">
+            <button type="button" data-q="کسرهای متعارف رو مثل یه معلم ساده توضیح بده و دو تا مثال حل کن.">کسرها رو یادم بده</button>
+            <button type="button" data-q="فتوسنتز چیه؟ ساده و کامل توضیح بده.">فتوسنتز یعنی چی؟</button>
+            <button type="button" data-q="فعل ماضی در عربی پایه هشتم رو با مثال یاد بده.">عربی: فعل ماضی</button>
+            <button type="button" data-q="معادله‌ی درجه اول رو با یه مثال قدم‌به‌قدم توضیح بده.">ریاضی: معادله</button>
+          </div>
+          <form id="ai-form" class="ai-form" autocomplete="off">
+            <button type="button" id="ai-img-btn" class="cf-icon" aria-label="عکس مسئله">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17.5 9.5 13l3.5 3 3-2.5L20 17"/></svg>
+            </button>
+            <input type="file" id="ai-img-input" accept="image/png,image/jpeg,image/webp" hidden>
+            <textarea id="ai-text" rows="1" maxlength="4000" placeholder="سؤالت رو بنویس یا عکس مسئله رو بفرست…" aria-label="سؤال درسی"></textarea>
+            <button type="submit" id="ai-send" class="cf-send" aria-label="ارسال سؤال">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10.5 13.5M21 3l-6.8 18-3.7-7.5L3 9.8 21 3Z"/></svg>
+            </button>
+          </form>
+          <div id="ai-img-preview" class="chat-img-preview" hidden>
+            <img alt="پیش‌نمایش عکس مسئله">
+            <button type="button" id="ai-img-x" aria-label="حذف عکس">×</button>
+          </div>
+          <div class="ai-note">محدوده‌ی دستیار: کتاب‌های درسی پایه‌های هفتم، هشتم و نهم — سؤال غیردرسی جواب داده نمی‌شه.</div>
+        </div>
+
+        <div id="ai-gate" class="gate-box gate-dark" hidden>
+          <b>دستیار مال بچه‌های عضو صدره</b>
+          <span>وارد حسابت شو یا ۳۰ ثانیه‌ای عضو شو؛ بعدش هر سؤال درسی داری ازش بپرس.</span>
+          <div class="gate-actions">
+            <button class="btn btn-y" type="button" data-auth-open="register">عضویت</button>
+            <button class="btn btn-ghost-dark" type="button" data-auth-open="login">ورود</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ═══ About + real stats ═══ -->
     <section id="about" class="sec sec-light">
       <div class="wrap about-grid">
@@ -353,7 +476,8 @@
           <a href="#homework">تکالیف</a>
           <a href="#schedule-sec">برنامه‌ی هفته</a>
           <a href="#announcements">اعلان‌ها</a>
-          <a href="#subjects">درس‌ها</a>
+          <a href="#chat">چت</a>
+          <a href="#ai">دستیار درسی</a>
           <a href="#vip">بخش ویژه</a>
           <a href="#about">درباره ما</a>
         </nav>
@@ -377,9 +501,13 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V6a2 2 0 0 1 2-2h5v15H6a2 2 0 0 0-2 2Zm16 0V6a2 2 0 0 0-2-2h-5v15h5a2 2 0 0 1 2 2Z"/></svg>
       <span>تکالیف</span>
     </a>
-    <a href="#announcements" class="bn-item" data-bn="announcements">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16l-3-2-3 2-3-2-3 2V4Z"/><path d="M9 9h6M9 13h6"/></svg>
-      <span>اعلان‌ها</span>
+    <a href="#chat" class="bn-item" data-bn="chat">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12Z"/></svg>
+      <span>چت</span>
+    </a>
+    <a href="#ai" class="bn-item" data-bn="ai">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9Z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/></svg>
+      <span>دستیار</span>
     </a>
     <a href="#vip" class="bn-item" data-bn="vip">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
@@ -407,9 +535,52 @@
     </div>
   </div>
 
+  <!-- ═══ Account modal (login / register) ═══ -->
+  <div id="auth-modal" class="modal" hidden aria-hidden="true">
+    <div class="modal-back" data-aclose></div>
+    <div class="modal-card auth-mcard" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <button class="modal-x" type="button" data-aclose aria-label="بستن">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <h3 id="auth-title">حساب صدر بویز</h3>
+      <div class="auth-tabs" role="tablist" aria-label="ورود یا عضویت">
+        <button type="button" class="atab is-active" data-atab="login" role="tab" aria-selected="true">ورود</button>
+        <button type="button" class="atab" data-atab="register" role="tab" aria-selected="false">عضویت</button>
+      </div>
+      <form id="login-form" autocomplete="off">
+        <label class="afield">نام کاربری
+          <input id="li-user" maxlength="20" required placeholder="مثلاً amir_1389" dir="ltr">
+        </label>
+        <label class="afield">رمز عبور
+          <input id="li-pass" type="password" maxlength="64" required placeholder="رمزت…">
+        </label>
+        <button class="btn btn-y auth-go" type="submit" id="li-submit">ورود</button>
+      </form>
+      <form id="register-form" hidden autocomplete="off">
+        <label class="afield">اسم نمایشی
+          <input id="rg-name" maxlength="40" required placeholder="مثلاً امیر محمدی">
+        </label>
+        <label class="afield">نام کاربری
+          <input id="rg-user" maxlength="20" required placeholder="حروف انگلیسی، عدد و _" dir="ltr">
+        </label>
+        <label class="afield">پایه‌ی تحصیلی
+          <select id="rg-grade" required>
+            <option value="">انتخاب کن…</option>
+          </select>
+        </label>
+        <label class="afield">رمز عبور
+          <input id="rg-pass" type="password" maxlength="64" required placeholder="حداقل ۸ نویسه">
+        </label>
+        <button class="btn btn-y auth-go" type="submit" id="rg-submit">عضویت</button>
+      </form>
+      <div id="auth-msg" class="vip-msg" role="alert" hidden></div>
+    </div>
+  </div>
+
   <div id="toast" role="status" aria-live="polite" hidden></div>
 
   <script src="./assets/js/app-core.js" defer></script>
   <script src="./assets/js/app-fx.js" defer></script>
+  <script src="./assets/js/app-user.js" defer></script>
 </body>
 </html>

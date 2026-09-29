@@ -73,7 +73,10 @@
       const btn = $('#auth-submit');
       btn.disabled = true; btn.textContent = 'در حال بررسی…';
       try {
-        const admin = draftNow.admin || {};
+        // Auth must always verify against the PUBLISHED hash — a stale local
+        // draft must never be able to lock the owner out (or let old hashes in).
+        const pub = P.getPublished() || {};
+        const admin = pub.admin || draftNow.admin || {};
         const hex = await P.pbkdf2Hex(pass, admin.salt || '', admin.iterations || 150000);
         if (!admin.hash || !P.ctEqual(hex, admin.hash)) {
           const n = (lock.n || 0) + 1;
@@ -125,7 +128,7 @@
       $$('.pview').forEach(v => v.classList.remove('is-active'));
       const v = $('#view-' + b.dataset.view);
       v.classList.add('is-active');
-      ({ dash: renderDash, homework: renderHomework, announcements: renderAnnouncements, subjects: renderSubjects, schedule: renderSchedule, content: renderContent, vip: renderVip, settings: renderSettings })[b.dataset.view]();
+      ({ dash: renderDash, homework: renderHomework, announcements: renderAnnouncements, subjects: renderSubjects, schedule: renderSchedule, content: renderContent, users: renderUsers, debug: renderDebug, vip: renderVip, settings: renderSettings })[b.dataset.view]();
     }));
   }
 
@@ -742,6 +745,243 @@
       toast('به نسخه‌ی منتشرشده برگشت.');
       renderDash();
     });
+  }
+
+  /* ═══════════ APP ACCOUNTS (users & moderation) ═══════════ */
+  let appUser = undefined; // undefined = unknown · null = logged out
+
+  async function appMe() {
+    try {
+      const r = await fetch('/api/auth/me', { cache: 'no-store' });
+      const d = await r.json().catch(() => null);
+      appUser = d && d.user ? d.user : null;
+    } catch (e) { appUser = null; }
+    return appUser;
+  }
+
+  async function appLogin(username, password) {
+    const r = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const d = await r.json().catch(() => null);
+    if (!r.ok) throw new Error((d && d.error) || 'ورود به سامانه ناموفق بود.');
+    appUser = d.user;
+    return d.user;
+  }
+
+  async function appPatch(id, body) {
+    const r = await fetch('/api/admin/users/' + encodeURIComponent(id), {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const d = await r.json().catch(() => null);
+    if (!r.ok) throw new Error((d && d.error) || 'عملیات ناموفق بود.');
+    return d;
+  }
+
+  const MUTE_OPTS = [
+    { v: '1', n: 'سکوت ۱ ساعته' }, { v: '6', n: 'سکوت ۶ ساعته' },
+    { v: '24', n: 'سکوت ۱ روزه' }, { v: '72', n: 'سکوت ۳ روزه' },
+    { v: '168', n: 'سکوت ۱ هفته‌ای' }
+  ];
+  const ROLE_FA = { STUDENT: 'دانش‌آموز', MODERATOR: 'ناظر', CONTENT_EDITOR: 'ویراستار', ADMIN: 'مدیر', SUPER_ADMIN: 'مدیر ارشد' };
+
+  function statusChip(u) {
+    if (u.isBanned) return '<i class="uchip u-red">مسدود</i>';
+    if (u.mutedUntil && new Date(u.mutedUntil) > new Date())
+      return '<i class="uchip u-amber">سکوت تا ' + fmtDT(u.mutedUntil) + '</i>';
+    return '<i class="uchip u-green">فعال</i>';
+  }
+
+  async function renderUsers() {
+    const view = $('#view-users');
+    if (appUser === undefined) await appMe();
+
+    if (!appUser) {
+      view.innerHTML = `
+        <div class="pcard">
+          <h2>کاربران سایت</h2>
+          <div class="pd">برای دیدن اعضای ثبت‌نام‌شده و دادن سکوت/مسدودی، اول با حساب مدیرِ سامانه وارد شو.</div>
+          <form id="au-form" style="display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-top:10px">
+            <label class="plabel">نام کاربری<input id="au-user" dir="ltr" placeholder="admin"></label>
+            <label class="plabel">رمز سامانه<input id="au-pass" type="password" placeholder="رمز مدیر"></label>
+            <button class="pbtn pbtn-primary" type="submit">ورود به سامانه</button>
+          </form>
+          <div id="au-msg" class="pmsg err" hidden></div>
+        </div>`;
+      $('#au-form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const msg = $('#au-msg');
+        msg.hidden = true;
+        try {
+          await appLogin($('#au-user').value.trim().toLowerCase() || 'admin', $('#au-pass').value);
+          toast('به سامانه وصل شدی.');
+          renderUsers();
+        } catch (err) {
+          msg.textContent = err.message;
+          msg.hidden = false;
+        }
+      });
+      return;
+    }
+
+    const canMod = ['MODERATOR', 'ADMIN', 'SUPER_ADMIN'].includes(appUser.role);
+    if (!canMod) {
+      view.innerHTML = `<div class="pcard"><h2>کاربران سایت</h2>
+        <div class="pd">حساب «${esc(appUser.username)}» دسترسی مدیریتی نداره. با حساب مدیر اصلی وارد شو.</div>
+        <button class="pbtn pbtn-ghost" type="button" id="au-switch">ورود با حساب دیگر</button></div>`;
+      $('#au-switch').addEventListener('click', () => {
+        fetch('/api/auth/logout', { method: 'POST' }).catch(() => { });
+        appUser = null;
+        renderUsers();
+      });
+      return;
+    }
+
+    view.innerHTML = `
+      <div class="pcard">
+        <h2>کاربران سایت</h2>
+        <div class="pd">وصل است به‌عنوان «${esc(appUser.displayName)}» — همه‌ی اعداد واقعی‌اند. سکوت موفق یعنی کاربر تا زمان مشخصی نمی‌تواند در چت پیام بدهد.</div>
+        <div style="display:flex;gap:8px;align-items:center;margin:10px 0;flex-wrap:wrap">
+          <input id="au-q" placeholder="جست‌وجوی نام یا نام کاربری…" style="flex:1;min-width:180px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font:inherit">
+          <button class="pbtn pbtn-ghost" type="button" id="au-refresh">تازه‌سازی</button>
+          <button class="pbtn pbtn-ghost" type="button" id="au-logout-app">خروج از سامانه</button>
+        </div>
+        <div id="au-list" class="au-list"><div class="pd">در حال خواندن…</div></div>
+      </div>`;
+
+    $('#au-refresh').addEventListener('click', loadUsers);
+    $('#au-logout-app').addEventListener('click', async () => {
+      fetch('/api/auth/logout', { method: 'POST' }).catch(() => { });
+      appUser = null;
+      renderUsers();
+    });
+    let qT;
+    $('#au-q').addEventListener('input', () => { clearTimeout(qT); qT = setTimeout(loadUsers, 250); });
+
+    async function loadUsers() {
+      const list = $('#au-list');
+      if (!list) return;
+      try {
+        const q = $('#au-q').value.trim();
+        const r = await fetch('/api/admin/users' + (q ? '?q=' + encodeURIComponent(q) : ''), { cache: 'no-store' });
+        const d = await r.json().catch(() => null);
+        if (!r.ok) throw new Error((d && d.error) || 'خواندن کاربران ناموفق بود.');
+        const items = d.items || [];
+        if (!items.length) {
+          list.innerHTML = '<div class="pd">هنوز کسی ثبت‌نام نکرده. به‌محض اولین عضویت، همین‌جا ظاهر می‌شه.</div>';
+          return;
+        }
+        list.innerHTML = items.map(u => `
+          <div class="urow" data-id="${esc(u.id)}">
+            <div class="u-main">
+              <b>${esc(u.displayName)}</b>
+              <span dir="ltr">@${esc(u.username)}</span>
+              ${u.grade ? `<i class="uchip u-t">${esc(u.grade.shortName || '')}</i>` : ''}
+              ${u.isVip ? '<i class="uchip u-gold">VIP</i>' : ''}
+              ${ROLE_FA[u.role] && u.role !== 'STUDENT' ? `<i class="uchip u-red">${ROLE_FA[u.role]}</i>` : ''}
+              ${statusChip(u)}
+            </div>
+            <div class="u-meta">
+              <span>عضویت: ${fmtD(u.createdAt)}</span>
+              <span>آخرین بازدید: ${fmtD(u.lastSeenAt)}</span>
+              <span>پیام‌ها: ${faNum(u.messageCount)}</span>
+              ${u.isBanned && u.banReason ? `<span>دلیل مسدودی: ${esc(u.banReason)}</span>` : ''}
+            </div>
+            <div class="u-actions">
+              <select class="u-mute" data-id="${esc(u.id)}" ${u.isBanned ? 'disabled' : ''}>
+                <option value="">سکوت موقت…</option>
+                ${u.mutedUntil && new Date(u.mutedUntil) > new Date() ? '<option value="0">رفع سکوت (پایان سکوت)</option>' : ''}
+                ${MUTE_OPTS.map(o => `<option value="${o.v}">${o.n}</option>`).join('')}
+              </select>
+              ${u.isBanned
+            ? `<button class="pbtn pbtn-ghost u-act" data-act="unban" data-id="${esc(u.id)}">رفع مسدودی</button>`
+            : `<button class="pbtn pbtn-ghost u-act" data-act="ban" data-id="${esc(u.id)}">مسدود کردن</button>`}
+              ${u.isVip
+            ? `<button class="pbtn pbtn-ghost u-act" data-act="unvip" data-id="${esc(u.id)}">گرفتن VIP</button>`
+            : `<button class="pbtn pbtn-ghost u-act" data-act="vip" data-id="${esc(u.id)}" ${u.isBanned ? 'disabled' : ''}>دادن VIP (۳۰ روز)</button>`}
+            </div>
+          </div>`).join('');
+
+        list.querySelectorAll('.u-act').forEach(b => b.addEventListener('click', async () => {
+          const id = b.dataset.id, act = b.dataset.act;
+          try {
+            if (act === 'ban') {
+              const reason = prompt('دلیل مسدودی رو بنویس (برای خود کاربر نمایش داده می‌شه):', 'نقض قوانین چت');
+              if (reason === null) return;
+              await appPatch(id, { ban: true, banReason: reason || 'نقض قوانین سامانه' });
+              toast('کاربر مسدود شد.');
+            } else if (act === 'unban') {
+              await appPatch(id, { ban: false });
+              toast('مسدودی برداشته شد.');
+            } else if (act === 'vip') {
+              await appPatch(id, { vipAction: 'grant', vipDays: 30 });
+              toast('VIP تا ۳۰ روز فعال شد.');
+            } else if (act === 'unvip') {
+              await appPatch(id, { vipAction: 'revoke' });
+              toast('VIP گرفته شد.');
+            }
+            loadUsers();
+          } catch (err) { toast(err.message, true); }
+        }));
+
+        list.querySelectorAll('.u-mute').forEach(sel => sel.addEventListener('change', async () => {
+          const hours = sel.value;
+          if (!hours) return;
+          try {
+            await appPatch(sel.dataset.id, { muteHours: Number(hours) });
+            toast('سکوت اعمال شد.');
+            loadUsers();
+          } catch (err) { toast(err.message, true); }
+        }));
+      } catch (err) {
+        list.innerHTML = '<div class="pd">' + esc(err.message) + '</div>';
+      }
+    }
+    loadUsers();
+  }
+
+  /* ═══════════ DEBUG ═══════════ */
+  async function renderDebug() {
+    const view = $('#view-debug');
+    view.innerHTML = `<div class="pcard"><h2>عیب‌یابی</h2><div class="pd">در حال بررسی…</div></div>`;
+    const rows = [];
+    let health = null;
+    try {
+      const r = await fetch('/api/health', { cache: 'no-store' });
+      health = await r.json();
+    } catch (e) { health = null; }
+
+    if (health && health.ok) {
+      const db = health.db || {};
+      rows.push(['اتصال به سرور', '<i class="uchip u-green">برقرار</i>']);
+      rows.push(['ساعت سرور', fmtDT(health.time)]);
+      rows.push(['اعضای ثبت‌نام‌شده', faNum(db.users || 0)]);
+      rows.push(['پیام‌های چت', faNum(db.messages || 0)]);
+      rows.push(['اتاق‌های چت', faNum(db.rooms || 0)]);
+      rows.push(['تکالیف ثبت‌شده', faNum(db.homework || 0)]);
+      rows.push(['اعلان‌ها', faNum(db.announcements || 0)]);
+    } else {
+      rows.push(['اتصال به سرور', '<i class="uchip u-red">ناموفق</i>']);
+      rows.push(['توضیح', 'سامانه (چت، عضویت، دستیار) فقط روی نسخه‌ی اصلی سایت فعاله؛ روی نسخه‌ی استاتیک GitHub Pages در دسترس نیست.']);
+    }
+
+    if (appUser === undefined) await appMe();
+    rows.push(['ورود مدیر به سامانه', appUser ? '<i class="uchip u-green">' + esc(appUser.username) + '</i>' : '<i class="uchip u-amber">وارد نشده</i>']);
+    rows.push(['داده‌ی سایت (data.json)', P.getDraft() && P.getDraft().version ? '<i class="uchip u-green">سالم (v' + faNum(P.getDraft().version) + ')</i>' : '<i class="uchip u-red">نامشخص</i>']);
+    rows.push(['توکن انتشار GitHub', store.getToken() ? '<i class="uchip u-green">ذخیره شده</i>' : '<i class="uchip u-amber">هنوز وارد نشده</i>']);
+
+    view.innerHTML = `<div class="pcard">
+      <h2>عیب‌یابی</h2>
+      <div class="pd">وضعیت لحظه‌ای سامانه — همه‌چیز واقعی و زنده.</div>
+      <div class="dbg-grid">
+        ${rows.map(r => `<div class="dbg-row"><b>${r[0]}</b><span>${r[1]}</span></div>`).join('')}
+      </div>
+      <div class="pd" style="margin-top:10px">نکته: چت و دستیار هوشمند به سرور نیاز دارن — روی نشانی اصلی سایت تست کن، نه نسخه‌ی استاتیک.</div>
+    </div>`;
   }
 
   /* ═══════════ PUBLISH ═══════════ */

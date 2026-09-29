@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   سلام صدر بویز — app-core.js
+   سلام صدر بویز — app-core.js (v2)
    Data layer · Persian utils · renderers (XSS-safe)
    ═══════════════════════════════════════════════════════ */
 'use strict';
@@ -28,7 +28,7 @@ window.SSB = (function () {
     const s = String(u || '').trim();
     if (!s) return '';
     if (/^(https?:\/\/|mailto:)/i.test(s)) return s;
-    if (/^[\w.-]+\.[a-z]{2,}(\/|$)/i.test(s)) return 'https://' + s; // bare domain
+    if (/^[\w.-]+\.[a-z]{2,}(\/|$)/i.test(s)) return 'https://' + s;
     return '';
   }
 
@@ -68,6 +68,10 @@ window.SSB = (function () {
       return new Intl.DateTimeFormat('fa-IR-u-ca-persian', { timeZone: TZ, weekday: 'long' }).format(date);
     } catch (e) { return ''; }
   }
+  function tehranClock(date) {
+    const p = tzParts(date);
+    return faNum(String(p.hh).padStart(2, '0')) + ':' + faNum(String(p.mm).padStart(2, '0'));
+  }
   const normDay = s => String(s || '').replace(/[\u200C\s]/g, '');
 
   function countdown(due) {
@@ -84,7 +88,6 @@ window.SSB = (function () {
     return { past, txt };
   }
 
-  /* homework buckets by Tehran day */
   function bucketOf(due) {
     const k = dayKey(due);
     const today = dayKey(new Date());
@@ -107,10 +110,11 @@ window.SSB = (function () {
   };
 
   const SUBJECT_PALETTE = ['yellow', 'turquoise', 'green', 'red'];
-  const COLOR_HEX = { yellow: '#F5B301', turquoise: '#14B8C4', red: '#E5484D', green: '#3BA55D' };
+  const COLOR_HEX = { yellow: '#F2A90A', turquoise: '#22C4D6', red: '#E0343C', green: '#12A06B' };
   const GRADE_COLORS = { 7: 'yellow', 8: 'turquoise', 9: 'green' };
   const GRADE_NAMES = { 7: 'هفتم', 8: 'هشتم', 9: 'نهم' };
   const DAY_NAMES = ['شنبه', 'یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه'];
+  const DAY_SHORT = ['ش', 'ی', 'د', 'س', 'چ', 'پ'];
   const SUBJECT_FALLBACK = ['ریاضی', 'علوم', 'فارسی', 'عربی', 'دینی', 'اجتماعی', 'انسانی', 'نگارش', 'انگلیسی', 'کار و فناوری', 'مجازی', 'ورزش', 'افق'];
 
   function subjectColor(name, subjects) {
@@ -125,7 +129,6 @@ window.SSB = (function () {
 
   /* ── data loading ── */
   async function loadData() {
-    // preview mode: draft pushed by admin panel
     try {
       const pv = localStorage.getItem('ssb_preview');
       if (pv) {
@@ -133,7 +136,8 @@ window.SSB = (function () {
         if (d && d.version) {
           state.data = d;
           state.previewMode = true;
-          document.getElementById('preview-banner').hidden = false;
+          const pb = document.getElementById('preview-banner');
+          if (pb) pb.hidden = false;
           return d;
         }
       }
@@ -150,20 +154,23 @@ window.SSB = (function () {
     const s = state.data.site || {};
     if (s.heroTitle) {
       document.title = s.heroTitle + ' | سایت بچه‌های مدرسه‌ی سلام صدر';
-      const ht = $('.ht-line');
-      if (ht && s.heroTitle.includes('صدر')) {
-        ht.innerHTML = esc(s.heroTitle).replace('صدر', '<em class="ht-mark">صدر</em>');
-      }
+      const ht = $('#ht-line');
+      if (ht) ht.textContent = s.heroTitle;
     }
     if (s.heroTagline) $('#hero-tagline').textContent = s.heroTagline;
     if (s.aboutTitle) $('#about-title').textContent = s.aboutTitle;
     if (s.aboutText) $('#about-text').textContent = s.aboutText;
     if (s.roadmap) $('#roadmap-text').textContent = s.roadmap;
     if (Array.isArray(s.marquee) && s.marquee.length) {
-      const unit = s.marquee.map(t => '<span>' + esc(t) + '</span><i>✦</i>').join('');
-      $('#marquee-track').innerHTML = unit + unit + unit + unit;
+      const mq = $('#marquee-track');
+      if (mq) {
+        const unit = s.marquee.map(t => '<span>' + esc(t) + '</span><i>✦</i>').join('');
+        mq.innerHTML = unit + unit + unit + unit;
+      }
     }
     $('#hero-date').textContent = faDateLong(new Date());
+    const mo = $('#mo-date');
+    if (mo) mo.textContent = faDateLong(new Date());
     $('#foot-year').textContent = faNum(new Intl.DateTimeFormat('en-u-ca-persian', { timeZone: TZ, year: 'numeric' }).format(new Date()).match(/\d+/)?.[0] || '۱۴۰۵');
   }
 
@@ -211,7 +218,7 @@ window.SSB = (function () {
           <div>
             <h3 class="hw-title">${esc(h.title)}</h3>
             <div class="hw-meta">
-              <span class="hw-subject" style="--g:${COLOR_HEX[c]};--g-soft:${colorSoft(c)};--g-ink:var(--ink)">${esc(h.subject || 'درس')}</span>
+              <span class="hw-subject" style="--g:${COLOR_HEX[c]};--g-soft:${colorSoft(c)}">${esc(h.subject || 'درس')}</span>
               <span class="grade-tag gt-${GRADE_COLORS[+h.grade] || 'y'}">پایه‌ی ${GRADE_NAMES[+h.grade] || faNum(h.grade)}</span>
               ${h.teacher ? `<span class="m hw-teacher"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>${esc(h.teacher)}</span>` : ''}
             </div>
@@ -295,7 +302,7 @@ window.SSB = (function () {
       .filter(r => +r.grade === state.schGrade && +r.day === state.schDay)
       .sort((a, b) => (+a.period || 0) - (+b.period || 0));
     if (!rows.length) {
-      listEl.innerHTML = `<div class="empty" style="padding:30px 20px">
+      listEl.innerHTML = `<div class="empty" style="padding:1.875rem 1.25rem">
         <b>برنامه‌ی ${DAY_NAMES[state.schDay]} برای پایه‌ی ${GRADE_NAMES[state.schGrade]} هنوز ثبت نشده.</b>
       </div>`;
       return;
@@ -306,6 +313,29 @@ window.SSB = (function () {
         <span class="s">${esc(r.subject)}</span>
         ${r.teacher ? `<span class="t">${esc(r.teacher)}</span>` : ''}
       </div>`).join('');
+  }
+
+  /* weekly circuit map: 6 day markers on the SVG track */
+  function renderCircuitDays() {
+    const g = $('#circuit-days');
+    const path = $('#circuit-base');
+    if (!g || !path || typeof path.getTotalLength !== 'function') return;
+    const L = path.getTotalLength();
+    const fr = [0.035, 0.21, 0.40, 0.575, 0.765, 0.94];
+    const todayIdx = DAY_NAMES.findIndex(d => normDay(d) === normDay(faWeekday(new Date())));
+    g.innerHTML = fr.map((f, i) => {
+      const pt = path.getPointAtLength(L * f);
+      const col = ['var(--yellow)', 'var(--turq)', 'var(--green)', 'var(--red)', 'var(--yellow)', 'var(--turq)'][i];
+      return `<g class="day-marker" data-day="${i}" transform="translate(${pt.x.toFixed(1)},${pt.y.toFixed(1)})">
+        <circle r="15" stroke="${col}"></circle>
+        <text y="5.5">${DAY_SHORT[i]}</text>
+        <text class="dm-label" y="34">${DAY_NAMES[i]}</text>
+      </g>`;
+    }).join('');
+    $$('.day-marker', g).forEach(m => {
+      if (+m.dataset.day === todayIdx) m.classList.add('lit');
+    });
+    /* light all markers progressively when the lap runs (fx reads .day-marker) */
   }
 
   function renderAnnouncements() {
@@ -325,13 +355,14 @@ window.SSB = (function () {
     });
     list.innerHTML = sorted.map(a => {
       const c = SUBJECT_PALETTE.includes(a.color) ? a.color : 'yellow';
+      const dt = a.date ? faDateShort(new Date(a.date)) : '';
       return `<article class="ann-item">
         <span class="ann-dot" style="--g:${COLOR_HEX[c]}"></span>
         <div class="ann-card">
           <div class="ann-top">
             ${a.pinned ? '<span class="ann-pin">مهم</span>' : ''}
             <h3>${esc(a.title)}</h3>
-            <span class="ann-date">${esc(a.date ? faDateShort(new Date(a.date)) : '')}</span>
+            ${dt ? `<span class="ann-date" data-assemble="${esc(dt)}"></span>` : ''}
           </div>
           ${a.body ? `<p>${esc(a.body).replace(/\n/g, '<br>')}</p>` : ''}
         </div>
@@ -391,6 +422,7 @@ window.SSB = (function () {
     renderSubjects();
     renderScheduleTabs();
     renderSchedule();
+    renderCircuitDays();
     renderAnnouncements();
     renderStats();
     renderContacts();
@@ -433,8 +465,8 @@ window.SSB = (function () {
   }
 
   return {
-    $, $$, faNum, enNum, esc, sanitizeUrl,
+    $, $$, faNum, enNum, esc, sanitizeUrl, tehranClock, faDateLong, faDateShort,
     loadData, renderAll, initEvents, state,
-    COLOR_HEX, GRADE_NAMES, DAY_NAMES
+    COLOR_HEX, GRADE_NAMES, DAY_NAMES, TZ
   };
 })();

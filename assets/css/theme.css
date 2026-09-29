@@ -1,0 +1,279 @@
+/* ═══════════════════════════════════════════════════════
+   سلام صدر بویز — theme.css  (v4)
+   Dark/Light dual theme + professional motion layer.
+   Lightweight contract kept: transform/opacity only,
+   no canvas, no layout thrash, reduced-motion respected.
+   ═══════════════════════════════════════════════════════ */
+
+/* ─────────── color-scheme per theme ─────────── */
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="light"]{color-scheme:light}
+
+/* ─────────── DARK theme — panel context flips to ink ─────────── */
+html[data-theme="dark"]{
+  --paper:#14100B; --paper-2:#1B1611;
+  --card:rgba(255,255,255,.055);
+  --ink:rgba(250,246,237,.93);
+  --ink-2:rgba(250,246,237,.62);
+  --ink-3:rgba(250,246,237,.4);
+  --line:rgba(250,246,237,.11);
+  --line-strong:rgba(250,246,237,.24);
+  --tint:rgba(255,255,255,.07);
+  --y-ink:#FFC738; --t-ink:#5FD9E8; --g-ink:#3FD68F; --r-ink:#FF8286;
+  --veil:rgba(5,4,2,.72);
+  --veil-menu:rgba(5,4,2,.9);
+  --empty-bg:rgba(255,255,255,.03);
+  --shadow-1:0 .0625rem .125rem rgba(0,0,0,.32),0 .375rem 1.125rem -0.375rem rgba(0,0,0,.5);
+  --shadow-2:0 .125rem .25rem rgba(0,0,0,.36),0 1rem 2.25rem -0.75rem rgba(0,0,0,.62);
+  --shadow-3:0 .125rem .375rem rgba(0,0,0,.3),0 .875rem 2rem -0.625rem rgba(0,0,0,.5);
+}
+
+/* ─────────── LIGHT theme — stage context flips to paper ─────────── */
+html[data-theme="light"]{
+  --night:#F2EDE0; --night-2:#FBF8F0;
+  --card-dark:rgba(23,18,9,.045);
+  --line-dark:rgba(23,18,9,.14);
+  --paper-on-dark:#1D1710;
+  --muted-on-dark:#6B6154;
+  --ring-dash:rgba(23,18,9,.24);
+  --halftone-c:rgba(23,18,9,.1);
+  --grid-line:rgba(23,18,9,.05);
+  --grid-dot:rgba(23,18,9,.22);
+  --seg-track:rgba(23,18,9,.13);
+  --seam-c:rgba(23,18,9,.88);
+  --nav-glass:rgba(246,241,229,.82);
+  --dock-glass:rgba(246,241,229,.9);
+  --veil:rgba(29,23,16,.46);
+  --veil-menu:rgba(246,241,229,.9);
+  --bn-active:#0E8FA0;
+}
+
+/* ─────────── ink scopes — statement surfaces stay dark in light mode ─────────── */
+html[data-theme="light"] .ink{
+  --night:#0D0B08; --night-2:#161209;
+  --card-dark:rgba(255,255,255,.045);
+  --line-dark:rgba(250,246,237,.12);
+  --paper-on-dark:rgba(250,246,237,.92);
+  --muted-on-dark:rgba(250,246,237,.55);
+  --ring-dash:rgba(250,246,237,.3);
+  --halftone-c:rgba(250,246,237,.13);
+  --grid-line:rgba(250,246,237,.055);
+  --line-strong:rgba(250,246,237,.24);
+  /* pin panel-context tokens too, so mixed-context components stay dark */
+  --paper:#14100B; --paper-2:#1B1611;
+  --card:rgba(255,255,255,.055);
+  --ink:rgba(250,246,237,.93);
+  --ink-2:rgba(250,246,237,.62);
+  --ink-3:rgba(250,246,237,.4);
+  --line:rgba(250,246,237,.11);
+  --tint:rgba(255,255,255,.07);
+  --y-ink:#FFC738; --t-ink:#5FD9E8; --g-ink:#3FD68F; --r-ink:#FF8286;
+  --empty-bg:rgba(255,255,255,.03);
+}
+html[data-theme="light"] .cinema{background:var(--night)}
+#site-footer{background:#0A0806}
+
+/* ─────────── smooth theme cross-fade (class toggled ~500ms) ─────────── */
+html.theming,
+html.theming *,
+html.theming *::before,
+html.theming *::after{
+  transition:background-color .45s ease,border-color .45s ease,color .32s ease,
+             fill .32s ease,stroke .32s ease,box-shadow .45s ease !important;
+  transition-delay:0s !important;
+}
+
+/* ─────────── theme toggle button ─────────── */
+.theme-btn{
+  width:2.75rem;height:2.75rem;border-radius:.875rem;
+  border:.0625rem solid var(--line-dark);
+  display:grid;place-items:center;flex:none;
+  color:var(--paper-on-dark);
+  transition:background .3s,border-color .3s,transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+.theme-btn:hover{background:var(--card-dark);border-color:var(--line-strong);transform:translateY(-.0625rem)}
+.theme-btn:active{transform:scale(.92)}
+.theme-btn svg{width:1.125rem;height:1.125rem;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.theme-btn .i-sun,.theme-btn .i-moon{display:none}
+html[data-theme="dark"] .theme-btn .i-sun{display:block}
+html[data-theme="light"] .theme-btn .i-moon{display:block}
+.theme-btn-sm{width:2.25rem;height:2.25rem;border-radius:.75rem}
+.mo-foot .theme-btn{margin-inline-start:auto}
+
+/* ─────────── editorial section headers — numbered dossier look ─────────── */
+.sec-head{position:relative;padding-top:1.5rem}
+.sec-head::before{
+  content:"";position:absolute;top:0;right:0;width:4rem;height:.1875rem;border-radius:99rem;
+  background:var(--head-c,var(--yellow));
+  transform:scaleX(0);transform-origin:right;
+  transition:transform .8s cubic-bezier(.16,1,.3,1) .15s;
+}
+.sec-head.sprung::before{transform:scaleX(1)}
+.sec-head::after{
+  content:attr(data-num);
+  position:absolute;top:.35rem;left:.125rem;
+  font-size:.72rem;font-weight:800;letter-spacing:.14em;
+  color:var(--ink-3);font-variant-numeric:tabular-nums;
+}
+.panel-dark .sec-head::after,.sec-dark .sec-head::after,.ink .sec-head::after{color:var(--muted-on-dark)}
+#homework .sec-head{--head-c:var(--yellow)}
+#schedule-sec .sec-head{--head-c:var(--turq)}
+#announcements .sec-head{--head-c:var(--red)}
+#subjects .sec-head{--head-c:var(--green)}
+#chat .sec-head{--head-c:var(--turq)}
+#ai .sec-head{--head-c:var(--green)}
+#contact .sec-head{--head-c:var(--turq)}
+#about .about-copy{position:relative;padding-top:1.5rem}
+#about .about-copy::before{
+  content:"";position:absolute;top:0;right:0;width:4rem;height:.1875rem;border-radius:99rem;
+  background:var(--yellow);transform:scaleX(0);transform-origin:right;
+  transition:transform .8s cubic-bezier(.16,1,.3,1) .15s;
+}
+#about .about-copy.sprung::before{transform:scaleX(1)}
+#about .about-copy::after{
+  content:attr(data-num);position:absolute;top:.35rem;left:.125rem;
+  font-size:.72rem;font-weight:800;letter-spacing:.14em;color:var(--ink-3);
+}
+
+/* ─────────── hero stage glow (static, cheap) ─────────── */
+.hero::before{
+  content:"";position:absolute;top:-18%;right:50%;transform:translateX(50%);
+  width:64rem;height:42rem;max-width:160vw;pointer-events:none;
+  background:
+    radial-gradient(42% 46% at 62% 38%,rgba(34,196,214,.11),transparent 70%),
+    radial-gradient(36% 40% at 30% 62%,rgba(242,169,10,.07),transparent 70%);
+}
+html[data-theme="light"] .hero::before{opacity:.75}
+
+/* ─────────── film grain — one static layer, no animation ─────────── */
+body::after{
+  content:"";position:fixed;inset:0;z-index:99;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity:.045;
+}
+html[data-theme="dark"] body::after{opacity:.06}
+
+/* ─────────── ribbon marquee (between hero and cinema) ─────────── */
+.ribbon{
+  position:relative;z-index:2;overflow:hidden;
+  padding:.8rem 0;
+  border-top:.0625rem solid var(--line-dark);
+  border-bottom:.0625rem solid var(--line-dark);
+  background:var(--card-dark);
+  -webkit-mask-image:linear-gradient(to left,transparent,#000 8%,#000 92%,transparent);
+  mask-image:linear-gradient(to left,transparent,#000 8%,#000 92%,transparent);
+}
+.ribbon-track{
+  display:flex;width:max-content;direction:ltr;
+  animation:ribMove 30s linear infinite;will-change:transform;
+}
+.ribbon:hover .ribbon-track{animation-play-state:paused}
+.ribbon-track span{
+  display:inline-flex;align-items:center;white-space:nowrap;
+  padding-inline:1.4rem;
+  font-family:var(--font-display);font-size:1rem;line-height:1.6;
+  color:var(--paper-on-dark);opacity:.9;
+}
+.ribbon-track span i{font-style:normal;margin-inline-end:1.4rem;font-size:.8rem}
+.ribbon-track span:nth-child(4n+1) i{color:var(--yellow)}
+.ribbon-track span:nth-child(4n+2) i{color:var(--turq)}
+.ribbon-track span:nth-child(4n+3) i{color:var(--green)}
+.ribbon-track span:nth-child(4n+4) i{color:var(--red)}
+@keyframes ribMove{to{transform:translateX(-50%)}}
+
+/* ─────────── button sheen sweep + press physics ─────────── */
+.btn::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(to left,rgba(255,255,255,.32),rgba(255,255,255,0) 55%);
+  transform:translateX(115%);
+  transition:transform .65s cubic-bezier(.2,.8,.2,1);
+}
+.btn:hover::before{transform:translateX(-115%)}
+.btn:active{transform:scale(.965) !important}
+
+/* ─────────── card entrance stagger (pure CSS, replays on re-render) ─────────── */
+.hw-list>*,.subject-grid>*,.ann-list>*,.contact-rows>*,
+.schedule-list>*,.vip-links>*{
+  animation:cardIn .55s cubic-bezier(.16,1,.3,1) both;
+}
+.hw-list>*:nth-child(1),.subject-grid>*:nth-child(1),.ann-list>*:nth-child(1),
+.schedule-list>*:nth-child(1),.contact-rows>*:nth-child(1),.vip-links>*:nth-child(1){animation-delay:.03s}
+.hw-list>*:nth-child(2),.subject-grid>*:nth-child(2),.ann-list>*:nth-child(2),
+.schedule-list>*:nth-child(2),.contact-rows>*:nth-child(2),.vip-links>*:nth-child(2){animation-delay:.09s}
+.hw-list>*:nth-child(3),.subject-grid>*:nth-child(3),.ann-list>*:nth-child(3),
+.schedule-list>*:nth-child(3),.contact-rows>*:nth-child(3),.vip-links>*:nth-child(3){animation-delay:.15s}
+.hw-list>*:nth-child(4),.subject-grid>*:nth-child(4),.ann-list>*:nth-child(4),
+.schedule-list>*:nth-child(4),.contact-rows>*:nth-child(4),.vip-links>*:nth-child(4){animation-delay:.21s}
+.hw-list>*:nth-child(5),.subject-grid>*:nth-child(5),.ann-list>*:nth-child(5),
+.schedule-list>*:nth-child(5),.contact-rows>*:nth-child(5),.vip-links>*:nth-child(5){animation-delay:.27s}
+.hw-list>*:nth-child(6),.subject-grid>*:nth-child(6),.ann-list>*:nth-child(6),
+.schedule-list>*:nth-child(6),.contact-rows>*:nth-child(6),.vip-links>*:nth-child(6){animation-delay:.33s}
+.hw-list>*:nth-child(n+7),.subject-grid>*:nth-child(n+7),.ann-list>*:nth-child(n+7),
+.schedule-list>*:nth-child(n+7),.contact-rows>*:nth-child(n+7),.vip-links>*:nth-child(n+7){animation-delay:.39s}
+@keyframes cardIn{from{opacity:0;transform:translateY(.8rem) scale(.985)}to{opacity:1;transform:none}}
+
+/* ─────────── chat / AI message entrances ─────────── */
+.cmsg{animation:cmsgIn .34s cubic-bezier(.16,1,.3,1) both}
+.amsg{animation:cmsgIn .4s cubic-bezier(.16,1,.3,1) both}
+@keyframes cmsgIn{from{opacity:0;transform:translateY(.55rem)}to{opacity:1;transform:none}}
+
+/* ─────────── spotlight cards — cursor-tracked sheen (fine pointers) ─────────── */
+@media (hover:hover) and (pointer:fine){
+  .hw-card,.sub-card,.cc,.stat,.vip-link,.croom{
+    position:relative;overflow:hidden;
+  }
+  .hw-card::after,.sub-card::after,.cc::after,.stat::after,.vip-link::after,.croom::after{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    opacity:0;transition:opacity .35s ease;
+    background:radial-gradient(8.5rem 8.5rem at var(--sx,50%) var(--sy,50%),
+      var(--spot-c,rgba(34,196,214,.10)),transparent 72%);
+  }
+  .hw-card:hover::after,.sub-card:hover::after,.cc:hover::after,
+  .stat:hover::after,.vip-link:hover::after,.croom:hover::after{opacity:1}
+  .cc{overflow:hidden}
+  .stat::after{--spot-c:rgba(255,199,56,.14)}
+  .croom::after{--spot-c:rgba(34,196,214,.09)}
+  .vip-link::after{--spot-c:rgba(242,169,10,.12)}
+}
+
+/* ─────────── scroll anchor offset ─────────── */
+section,div[id]{scroll-margin-top:4.25rem}
+
+/* ─────────── light-mode finishing touches ─────────── */
+@media (max-width:640px){
+  .brand-text i{display:none}
+  .brand-text b{white-space:nowrap;font-size:.9rem}
+  .theme-btn{width:2.4rem;height:2.4rem;border-radius:.75rem}
+  .theme-btn svg{width:1rem;height:1rem}
+  .nu-out{padding:.22rem .55rem;font-size:.62rem}
+  .nav-inner{gap:.5rem}
+  .nav-auth{gap:.35rem}
+  #menu-btn{width:2.4rem;height:2.4rem}
+}
+html[data-theme="light"] #bottom-nav{border-top-color:rgba(23,18,9,.08)}
+html[data-theme="light"] .brand-text i{color:var(--muted-on-dark)}
+html[data-theme="light"] #site-nav.scrolled{box-shadow:0 .0625rem 0 rgba(23,18,9,.07),0 .75rem 1.75rem -1rem rgba(23,18,9,.12)}
+html[data-theme="light"] .hw-note{background:rgba(23,18,9,.035)}
+html[data-theme="light"] .chat-top,html[data-theme="light"] .croom,
+html[data-theme="light"] .chat-rules,html[data-theme="light"] .cf-icon,
+html[data-theme="light"] .chat-img-preview{background:var(--paper)}
+html[data-theme="dark"] .chat-top,html[data-theme="dark"] .croom,
+html[data-theme="dark"] .chat-rules,html[data-theme="dark"] .cf-icon,
+html[data-theme="dark"] .chat-img-preview{background:rgba(255,255,255,.035)}
+html[data-theme="dark"] .hw-note{background:rgba(255,255,255,.035)}
+html[data-theme="dark"] .stat{
+  background:rgba(255,255,255,.06);
+  border:.0625rem solid rgba(250,246,237,.1);
+  color:var(--ink);
+}
+
+/* ─────────── reduced motion — everything static & instant ─────────── */
+@media (prefers-reduced-motion:reduce){
+  .ribbon-track{animation:none}
+  .hw-list>*,.subject-grid>*,.ann-list>*,.schedule-list>*,
+  .contact-rows>*,.vip-links>*{animation:none}
+  .cmsg,.amsg{animation:none}
+  .btn::before{display:none}
+  .hw-card::after,.sub-card::after,.cc::after,.stat::after,.vip-link::after,.croom::after{display:none}
+  .sec-head::before,#about .about-copy::before{transition:none;transform:scaleX(1)}
+}
